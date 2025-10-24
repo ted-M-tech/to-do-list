@@ -21,6 +21,7 @@ class To_do_list():
         print("3. View Tasks")
         print("4. Exit")
         selected_menu = input("Enter your choice: ")
+        print("")
         return selected_menu
 
     def add_task(self):
@@ -33,7 +34,9 @@ class To_do_list():
         pass
 
     def view_tasks(self):
-        pass
+        to_do_list = pd.read_csv('to_do_list.csv')
+        print("To-do List:")
+        return print(to_do_list)
 
     def exit_app(self):
         pass
