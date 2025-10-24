@@ -6,6 +6,7 @@ class To_do_list():
         pass
 
     def load_file(self):
+        # Read to do list csv file
         if os.path.exists('to_do_list.csv'):
             to_do_list = pd.read_csv('to_do_list.csv')
         else:
