@@ -15,7 +15,7 @@ class To_do_list():
         return to_do_list
 
     def select_menu(self):
-        print("To-do List Application")
+        print("\nTo-do List Application")
         print("1. Add Task")
         print("2. Remove Task")
         print("3. View Tasks")
@@ -31,7 +31,11 @@ class To_do_list():
         return print(f"'{task}' has been added to the list.")
 
     def remove_task(self):
-        pass
+        delete_task = input("Enter the task to remove: ")
+        to_do_list = pd.read_csv('to_do_list.csv')
+        to_do_list = to_do_list[to_do_list['Tasks'] != delete_task]
+        to_do_list.to_csv('to_do_list.csv', index=False)
+        return print(f"'{delete_task}' has been removed from the list.")
 
     def view_tasks(self):
         to_do_list = pd.read_csv('to_do_list.csv')
