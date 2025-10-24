@@ -36,7 +36,8 @@ class To_do_list():
     def view_tasks(self):
         to_do_list = pd.read_csv('to_do_list.csv')
         print("To-do List:")
-        return print(to_do_list)
+        for index, task in enumerate(to_do_list['Tasks'], start=1):
+            print(f"{index}. {task}")
 
     def exit_app(self):
         pass
