@@ -40,4 +40,4 @@ class To_do_list():
             print(f"{index}. {task}")
 
     def exit_app(self):
-        pass
+        return print("Exiting the application. Goodbye!")
