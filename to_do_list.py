@@ -7,7 +7,7 @@ class To_do_list():
         if os.path.exists(self.filename):
             self.tasks = pd.read_csv(self.filename)
         else:
-            self.tasks = pd.DataFrame(columns=["task", "deadline"])
+            self.tasks = pd.DataFrame(columns=["task", "deadline", "priority"])
 
     def save_tasks(self):
         self.tasks.to_csv(self.filename, index=False)
@@ -26,17 +26,24 @@ class To_do_list():
 
     def add_task(self):
         task = input("\nEnter the task: ")
-        deadline = input("Enter the deadline (optional, press enter to skip) e.g. 2025-12-31: ")
-        if deadline:
-            if not pd.to_datetime(deadline, errors='coerce') is pd.NaT:
-                deadline = pd.to_datetime(deadline).date()
-                new_task = pd.DataFrame({"task": [task], "deadline": [deadline]})
-            else:
-                print("    ⚠️ Invalid date format. Task will be added without a deadline.")
-                deadline = None
-                new_task = pd.DataFrame({"task": [task], "deadline": [deadline]})
+        priority = input("Enter the priority (High, Middle, Low (optional, press enter to skip): ").lower()
+        
+        if priority in ["high", "middle", "low"]:
+            pass
         else:
-            new_task = pd.DataFrame({"task": [task]})
+            print("    ⚠️ Invalid priority. Task will be added without priority.")
+            priority = None
+
+        deadline = input("Enter the deadline (optional, press enter to skip) e.g. 2025-12-31: ")
+
+        if not pd.to_datetime(deadline, errors='coerce') is pd.NaT:
+            deadline = pd.to_datetime(deadline).date()
+        else:
+            print("    ⚠️ Invalid date format. Task will be added without a deadline.")
+            deadline = None
+
+        new_task = pd.DataFrame({"task": [task], "deadline": [deadline], "priority": [priority]})
+
         self.tasks = pd.concat([self.tasks, new_task], ignore_index=True)
         print(f"    📋 '{task}' has been added.")
         self.save_tasks()
@@ -67,7 +74,10 @@ class To_do_list():
             for index, row in self.tasks.iterrows():
                 task = row["task"]
                 deadline = row["deadline"]
+                priority = row["priority"]
                 print(f"{index + 1}. {task}")
+                if not pd.isna(priority):
+                    print(f"   ❗ Priority: {priority}")
                 if not pd.isna(deadline):
                     print(f"   📅 Deadline: {deadline}")
 
