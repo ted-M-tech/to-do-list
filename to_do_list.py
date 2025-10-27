@@ -28,8 +28,13 @@ class To_do_list():
         task = input("\nEnter the task: ")
         deadline = input("Enter the deadline (optional, press enter to skip) e.g. 2025-12-31: ")
         if deadline:
-            deadline = pd.to_datetime(deadline).date()
-            new_task = pd.DataFrame({"task": [task], "deadline": [deadline]})
+            if not pd.to_datetime(deadline, errors='coerce') is pd.NaT:
+                deadline = pd.to_datetime(deadline).date()
+                new_task = pd.DataFrame({"task": [task], "deadline": [deadline]})
+            else:
+                print("    ⚠️ Invalid date format. Task will be added without a deadline.")
+                deadline = None
+                new_task = pd.DataFrame({"task": [task], "deadline": [deadline]})
         else:
             new_task = pd.DataFrame({"task": [task]})
         self.tasks = pd.concat([self.tasks, new_task], ignore_index=True)
