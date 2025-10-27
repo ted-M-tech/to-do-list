@@ -2,46 +2,60 @@ import pandas as pd
 import os
 
 class To_do_list():
-    def __init__(self):
-        pass
-
-    def load_file(self):
-        # Read to do list csv file
-        if os.path.exists('to_do_list.csv'):
-            to_do_list = pd.read_csv('to_do_list.csv')
+    def __init__(self, filename="todo_list.csv"):
+        self.filename = filename
+        if os.path.exists(self.filename):
+            self.tasks = pd.read_csv(self.filename)
         else:
-            to_do_list = pd.DataFrame(columns=['Tasks'])
-            to_do_list.to_csv('to_do_list.csv', index=False)
-        return to_do_list
+            self.tasks = pd.DataFrame(columns=["task"])
+
+    def save_tasks(self):
+        self.tasks.to_csv(self.filename, index=False)
 
     def select_menu(self):
-        print("\nTo-do List Application")
-        print("1. Add Task")
-        print("2. Remove Task")
-        print("3. View Tasks")
-        print("4. Exit")
-        selected_menu = input("Enter your choice: ")
-        print("")
+        print('\n' * 2)
+        print('----To-Do List Application----')
+        print(' 1. Add Task')
+        print(' 2. Remove Task')
+        print(' 3. View Tasks')
+        print(' 4. Exit')
+        print('-------------------------------')
+
+        selected_menu = int(input('Enter your choice (1 - 4): '))
         return selected_menu
 
     def add_task(self):
-        task = input("Enter the task: ")
-        df_task = pd.DataFrame({'Tasks': [task]})
-        df_task.to_csv('to_do_list.csv', mode='a', header=False, index=False)
-        return print(f"'{task}' has been added to the list.")
+        task = input("\nEnter the task: ")
+        new_task = pd.DataFrame({"task": [task]})
+        self.tasks = pd.concat([self.tasks, new_task], ignore_index=True)
+        print(f"    📋 '{task}' has been added.")
+        self.save_tasks()
 
     def remove_task(self):
-        delete_task = input("Enter the task to remove: ")
-        to_do_list = pd.read_csv('to_do_list.csv')
-        to_do_list = to_do_list[to_do_list['Tasks'] != delete_task]
-        to_do_list.to_csv('to_do_list.csv', index=False)
-        return print(f"'{delete_task}' has been removed from the list.")
+        task_no = input("\nEnter the task number to remove: ")
+
+        if not task_no.isdigit():
+            print("    ⚠️ Please enter a valid number.")
+            return
+
+        task_no = int(task_no)
+
+        if 0 <= task_no < len(self.tasks):
+            # Adjust for zero-based index
+            removed_task = self.tasks.loc[task_no - 1, "task"]
+            self.tasks = self.tasks.drop(task_no - 1).reset_index(drop=True)
+            print(f"    ✂️ '{removed_task}' has been removed.")
+            self.save_tasks()
+        else:
+            print(f"    ❌ Task {task_no} not found.")
 
     def view_tasks(self):
-        to_do_list = pd.read_csv('to_do_list.csv')
-        print("To-do List:")
-        for index, task in enumerate(to_do_list['Tasks'], start=1):
-            print(f"{index}. {task}")
+        if self.tasks.empty:
+            print("    🗒️ The to-do list is empty.")
+        else:
+            print("\n📂 To-Do List:")
+            for index, task in enumerate(self.tasks['task'], start=1):
+                print(f"{index}. {task}")
 
     def exit_app(self):
-        return print("Exiting the application. Goodbye!")
+        return print('\n👋 Exiting the application. Goodbye!')
