@@ -7,6 +7,7 @@ while True:
     if selected_menu == 1:
         to_do_list_obj.add_task()
     elif selected_menu == 2:
+        to_do_list_obj.view_tasks()  # Show tasks before removal to help user choose
         to_do_list_obj.remove_task()
     elif selected_menu == 3:
         to_do_list_obj.view_tasks()
@@ -15,4 +16,3 @@ while True:
         break
     else:
         print("Invalid choice. Please try again.")
-

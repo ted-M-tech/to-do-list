@@ -7,7 +7,7 @@ class To_do_list():
         if os.path.exists(self.filename):
             self.tasks = pd.read_csv(self.filename)
         else:
-            self.tasks = pd.DataFrame(columns=["task"])
+            self.tasks = pd.DataFrame(columns=["task","deadline"]) # Add Deadline column
 
     def save_tasks(self):
         self.tasks.to_csv(self.filename, index=False)
@@ -26,11 +26,14 @@ class To_do_list():
 
     def add_task(self):
         task = input("\nEnter the task: ")
-        new_task = pd.DataFrame({"task": [task]})
+        # Added deadline input, save in DataFrame, and display
+        deadline = input('Enter the deadline (Press enter to skip): ')
+        new_task = pd.DataFrame({"task": [task], "deadline": [deadline]})
         self.tasks = pd.concat([self.tasks, new_task], ignore_index=True)
-        print(f"    📋 '{task}' has been added.")
-        self.save_tasks()
+        print(f"    📋 '{task}' has been added (Deadline: {deadline or 'None'}).")
 
+        self.save_tasks()
+    
     def remove_task(self):
         task_no = input("\nEnter the task number to remove: ")
 
@@ -40,9 +43,9 @@ class To_do_list():
 
         task_no = int(task_no)
 
-        if 0 <= task_no < len(self.tasks):
-            # Adjust for zero-based index
-            removed_task = self.tasks.loc[task_no - 1, "task"]
+        # Fixed task_no -> task_no - 1 in if condition
+        if 0 <= task_no - 1 < len(self.tasks):
+            removed_task = self.tasks.iloc[task_no - 1,"task"]
             self.tasks = self.tasks.drop(task_no - 1).reset_index(drop=True)
             print(f"    ✂️ '{removed_task}' has been removed.")
             self.save_tasks()
@@ -55,7 +58,15 @@ class To_do_list():
         else:
             print("\n📂 To-Do List:")
             for index, task in enumerate(self.tasks['task'], start=1):
-                print(f"{index}. {task}")
+                # Include deadline in the display
+                deadline = self.tasks.loc[index - 1, "deadline"]
+                
+                if pd.isna(deadline) or str(deadline).strip() == "":
+                    print(f"{index}. {task}")
+                else:
+                    print(f"{index}. {task} - {deadline}")
 
     def exit_app(self):
         return print('\n👋 Exiting the application. Goodbye!')
+
+
