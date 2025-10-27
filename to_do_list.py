@@ -41,8 +41,9 @@ class To_do_list():
         task_no = int(task_no)
 
         if 0 <= task_no < len(self.tasks):
-            removed_task = self.tasks.loc[task_no, "task"]
-            self.tasks = self.tasks.drop(task_no).reset_index(drop=True)
+            # Adjust for zero-based index
+            removed_task = self.tasks.loc[task_no - 1, "task"]
+            self.tasks = self.tasks.drop(task_no - 1).reset_index(drop=True)
             print(f"    ✂️ '{removed_task}' has been removed.")
             self.save_tasks()
         else:
