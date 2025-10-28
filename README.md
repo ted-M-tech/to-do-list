@@ -1,5 +1,2 @@
 # Project
 Make console base to do list application
-#test
-
-# mco test
